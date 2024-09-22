@@ -122,7 +122,7 @@ const Modal = ({ isOpen, onClose, lakeId, onSave, refreshCard }) => {
         lakeData.append('longitude', formData.longitude);
         lakeData.append('latitude', formData.latitude);
 
-        if (formData.image && formData.image instanceof File) {
+        if (formData.image) {
             lakeData.append('image', formData.image);
         }
 
@@ -135,6 +135,7 @@ const Modal = ({ isOpen, onClose, lakeId, onSave, refreshCard }) => {
 
         onClose();
     };
+
 
     if (!isOpen) return null;
 
