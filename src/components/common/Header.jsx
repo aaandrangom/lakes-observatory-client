@@ -1,6 +1,6 @@
+// Header.js
 import React, { useState, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import Select from 'react-select';
 import UTNLetters from '/images/letters.png';
 import { FaUserCircle, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
 import { HiOutlineMenuAlt1 } from 'react-icons/hi';
@@ -8,79 +8,7 @@ import { Link } from 'react-router-dom';
 import { useTranslatedLinks } from '../../assets/options/data.js';
 import { useAuth } from '../../context/AuthContext';
 import { toast } from 'sonner';
-
-const languageOptions = [
-    { value: 'es', label: 'Español', flag: '/images/languages/es.svg' },
-    { value: 'en', label: 'Inglés', flag: '/images/languages/us.svg' },
-    { value: 'ru', label: 'Ruso', flag: '/images/languages/ru.svg' }
-];
-
-const customStyles = {
-    control: (provided) => ({
-        ...provided,
-        backgroundColor: 'transparent',
-        border: '1px solid white',
-        borderRadius: '4px',
-        minHeight: '38px',
-        boxShadow: 'none',
-        '&:hover': {
-            borderColor: 'white',
-        },
-    }),
-    singleValue: (provided) => ({
-        ...provided,
-        color: 'white',
-    }),
-    option: (provided, state) => ({
-        ...provided,
-        backgroundColor: state.isSelected ? '#FDE68A' : 'white',
-        color: state.isSelected ? '#4A4A4A' : '#4A4A4A',
-        '&:hover': {
-            backgroundColor: '#FDE68A',
-            color: 'blue',
-        },
-    }),
-    menu: (provided) => ({
-        ...provided,
-        minWidth: '150px',
-        maxWidth: '300px',
-        width: 'auto',
-        backgroundColor: '#1F2937',
-        borderRadius: '4px',
-        marginTop: '2px',
-    }),
-    dropdownIndicator: (provided) => ({
-        ...provided,
-        color: 'white',
-    }),
-};
-
-const CustomOption = ({ innerProps, label, data }) => (
-    <div {...innerProps} className="flex items-center p-2 cursor-pointer hover:bg-gray-100">
-        <img src={data.flag} alt={label} className="w-5 h-5 mr-2" />
-        <span>{label}</span>
-    </div>
-);
-
-const LanguageSelector = ({ changeLanguage, currentLanguage }) => {
-    const { t } = useTranslation();
-
-    const extendedLanguageOptions = languageOptions.map(option => ({
-        ...option,
-        label: t(`languages-${option.value}`),
-    }));
-
-    return (
-        <Select
-            options={extendedLanguageOptions}
-            onChange={changeLanguage}
-            value={extendedLanguageOptions.find(option => option.value === currentLanguage)}
-            styles={customStyles}
-            isSearchable={false}
-            components={{ Option: CustomOption }}
-        />
-    );
-};
+import LanguageSelector from './LanguageSelector.jsx';
 
 const Header = () => {
     const [open, setOpen] = useState(false);
@@ -92,24 +20,19 @@ const Header = () => {
     }, []);
 
     const handleLogout = async (e) => {
-
         e.preventDefault();
-
         toast.promise(
             (async () => {
                 const response = await logoutAction();
-                console.log(response);
                 if (response.status === 200) {
                     return response.data?.msg;
                 }
-
                 throw new Error(response.data?.details);
-
             })(),
             {
                 loading: 'Cerrando sesión...',
                 success: (msg) => `${msg}!`,
-                error: (err) => `${err.message}`
+                error: (err) => `${err.message}`,
             }
         );
     };
@@ -127,7 +50,7 @@ const Header = () => {
 
     const filteredLinks = isAdmin
         ? links
-        : links.filter(link => link.title !== t("administration"))
+        : links.filter(link => link.title !== t("administration"));
 
     if (!i18n.isInitialized) {
         return null;
