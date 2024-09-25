@@ -1,6 +1,6 @@
 import {
     FaDatabase, FaSlidersH,
-    FaTint, FaWater
+    FaTint
 } from "react-icons/fa";
 
 import {
@@ -10,11 +10,8 @@ import {
 } from "react-icons/ai";
 
 import { IoNotificationsOutline } from "react-icons/io5";
-
 import { FiUsers } from "react-icons/fi";
 import { MdTimeline } from 'react-icons/md';
-
-import { RiBarChartLine } from "react-icons/ri";
 
 import { useTranslation } from 'react-i18next';
 
@@ -29,26 +26,43 @@ export const useTranslatedLinks = () => {
         },
         {
             id: 2,
-            title: t("concept"),
-            url: "/concept",
+            title: t("meet-us"),
+            submenu: [
+                {
+                    id: 2.1,
+                    title: t('opcion1'),
+                    url: "/opcion1"
+                },
+                {
+                    id: 2.2,
+                    title: t('opcion1'),
+                    url: "/opcion1"
+                },
+                {
+                    id: 2.3,
+                    title: t('opcion1'),
+                    url: "/opcion1"
+                }
+            ]
         },
         {
             id: 3,
-            title: t("activities"),
-            url: "/activities",
+            title: t("our-actions"),
         },
         {
             id: 4,
-            title: t("news"),
-            url: "/news",
+            title: t("publications"),
         },
         {
             id: 5,
-            title: t("data"),
-            url: "/data",
+            title: t("news"),
         },
         {
             id: 6,
+            title: t("contact-us"),
+        },
+        {
+            id: 7,
             title: t("administration"),
             url: "/administration",
         },

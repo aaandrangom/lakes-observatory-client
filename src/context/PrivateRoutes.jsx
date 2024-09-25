@@ -9,12 +9,13 @@ const PrivateRoutes = ({ requiredRoles }) => {
         return <div>Cargando...</div>;
     }
 
+    console.log('isAuthenticated', isAuthenticated)
     if (!isAuthenticated) {
         return <Navigate to="/sign-in" replace />;
     }
 
     const hasRequiredRole = requiredRoles.some(role => roles.includes(role));
-
+    console.log('hasRequiredRole', hasRequiredRole)
     if (!hasRequiredRole) {
         return <Navigate to="/notfound" replace />;
     }

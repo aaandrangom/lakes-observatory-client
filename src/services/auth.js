@@ -106,5 +106,31 @@ export const Auth = {
         } catch (error) {
             return error.response;
         }
+    },
+
+    async getUserById(id) {
+        try {
+            const url = `users/${id}`;
+            const response = await apiClient.get(url);
+            return response;
+        } catch (error) {
+            return error.response;
+        }
+    },
+
+    async sendEmailVerificationAgain(email, full_name, user_id) {
+        try {
+            const url = `users/send-email-verification`;
+            const response = await apiClient.post(url,
+                {
+                    email: email,
+                    full_name: full_name,
+                    user_id: user_id
+                }
+            );
+            return response;
+        } catch (error) {
+            return error.response;
+        }
     }
 }

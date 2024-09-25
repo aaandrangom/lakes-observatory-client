@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
 import bgHome from "/images/bg-home.jpg";
 import { useAuth } from '../../context/AuthContext';
-import { Toaster, toast } from 'sonner';
+import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
 const Login = () => {

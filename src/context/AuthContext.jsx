@@ -1,8 +1,54 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Auth } from '../services/auth';
 
 const AuthContext = createContext();
+
+const isPublicRoute = (path) => {
+    const publicPaths = [
+        '/',
+        '/sign-in',
+        '/forgot-password',
+        '/link-expired',
+        '/concept',
+        '/sign-up',
+        '/activities',
+        '/news',
+        /^\/change-password\/.*/,
+        /^\/account-verified\/.*/
+    ];
+
+    return publicPaths.some(publicPath => {
+        return typeof publicPath === 'string' ? publicPath === path : publicPath.test(path);
+    });
+};
+
+const routeExists = (path) => {
+    const validRoutes = [
+        '/',
+        '/sign-in',
+        '/forgot-password',
+        '/link-expired',
+        '/concept',
+        '/sign-up',
+        '/activities',
+        '/news',
+        '/data',
+        '/admin/dashboard',
+        '/admin/manage-data/lakes',
+        '/admin/manage-data/parameters',
+        '/admin/manage-data/measurements',
+        '/admin/upload-data',
+        '/data/repositories',
+        '/profile',
+        '/regular-user', // Asegúrate de incluir esta ruta
+    ];
+
+    return validRoutes.includes(path) ||
+        /^\/change-password\/.*/.test(path) ||
+        /^\/account-verified\/.*/.test(path) ||
+        /^\/data\/repositories\/.*/.test(path);
+};
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -10,6 +56,7 @@ export const AuthProvider = ({ children }) => {
     const [userId, setUserId] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const isAdmin = roles ? roles.includes('admin') : false;
 
@@ -26,7 +73,7 @@ export const AuthProvider = ({ children }) => {
                 setUserId(null);
             }
         } catch (error) {
-            console.error('Error checking auth status:', error);
+            console.error('Error checking authentication status:', error);
             setIsAuthenticated(false);
             setRoles(null);
             setUserId(null);
@@ -36,23 +83,38 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        checkAuthStatus();
-    }, []);
+        const currentPath = location.pathname;
+
+        if (!routeExists(currentPath)) {
+            setLoading(false);
+            return;
+        }
+
+        if (!isPublicRoute(currentPath)) {
+            checkAuthStatus();
+        } else {
+            setLoading(false);
+        }
+    }, [location.pathname]);
 
     const signInAction = async (email, password) => {
         try {
             const response = await Auth.SignIn(email, password);
             if (response.status === 200) {
-                await checkAuthStatus();
+                const userRoles = response.data.body.roles.map(role => role.role_name);
+                setIsAuthenticated(true);
+                setRoles(userRoles);
+                setUserId(response.data.body.user.id);
 
-                if (roles && roles.includes('admin')) {
-                    navigate('/administration');
+                if (userRoles.includes('admin')) {
+                    navigate('/admin/dashboard');
                 } else {
                     navigate('/regular-user');
                 }
             }
             return response;
         } catch (error) {
+            console.error('Error in signInAction:', error);
             throw error;
         }
     };
@@ -64,31 +126,46 @@ export const AuthProvider = ({ children }) => {
                 setIsAuthenticated(false);
                 setRoles(null);
                 setUserId(null);
-                navigate('/');
+                navigate('/sign-in');
             }
             return response;
         } catch (error) {
+            console.error('Error during logout:', error);
             throw error;
         }
     };
 
     useEffect(() => {
-        const handleUnauthorized = () => {
-            setIsAuthenticated(false);
-            setRoles(null);
-            setUserId(null);
-            navigate('/sign-in');
+        const handleUnauthorizedAccess = () => {
+            const currentPath = window.location.pathname;
+
+            if (!routeExists(currentPath)) {
+                return;
+            }
+
+            if (!isPublicRoute(currentPath) && !loading && !isAuthenticated) {
+                console.log('Redirecting to sign-in due to unauthorized access:', currentPath);
+                navigate('/sign-in');
+            }
         };
 
-        window.addEventListener('unauthorizedAccess', handleUnauthorized);
-
+        window.addEventListener('unauthorizedAccess', handleUnauthorizedAccess);
         return () => {
-            window.removeEventListener('unauthorizedAccess', handleUnauthorized);
+            window.removeEventListener('unauthorizedAccess', handleUnauthorizedAccess);
         };
-    }, [navigate]);
+    }, [navigate, isAuthenticated, loading]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, roles, userId, isAdmin, signInAction, logoutAction, checkAuthStatus, loading }}>
+        <AuthContext.Provider value={{
+            isAuthenticated,
+            roles,
+            userId,
+            isAdmin,
+            signInAction,
+            logoutAction,
+            checkAuthStatus,
+            loading
+        }}>
             {children}
         </AuthContext.Provider>
     );

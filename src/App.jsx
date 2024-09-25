@@ -15,7 +15,6 @@ const Register = lazy(() => import('./pages/Register'));
 const AccountVerified = lazy(() => import('./pages/AccountVerified'));
 const Sidebar = lazy(() => import('./components/admin/Sidebar'));
 
-
 const Content = lazy(() => import('./pages/Content'));
 const Lakes = lazy(() => import('./components/admin/Lakes'));
 const Parameters = lazy(() => import('./components/admin/Parameters'));
@@ -26,6 +25,7 @@ const MainDataPage = lazy(() => import('./pages/MainDataPage'));
 const LakeDataDashboardPage = lazy(() => import('./pages/LakeDataDashboard'));
 const UnderConstruction = lazy(() => import('./pages/UnderConstruction'));
 const ChatFloat = lazy(() => import('./components/common/ChatFloat'));
+const Dashboard = lazy(() => import('./components/admin/Dashboard'));
 
 function App() {
   return (
@@ -41,8 +41,17 @@ function App() {
             <Route path='/sign-up' element={<Register />} />
             <Route path='/account-verified/:token' element={<AccountVerified />} />
 
+            <Route path='/concept' element={<UnderConstruction />} />
+            <Route path='/activities' element={<UnderConstruction />} />
+            <Route path='/news' element={<UnderConstruction />} />
+
             <Route element={<Sidebar />}>
               <Route element={<PrivateRoutes requiredRoles={['admin']} />}>
+                <Route path='/admin/dashboard' element={
+                  <Content>
+                    <Dashboard />
+                  </Content>
+                } />
                 <Route path='/admin/manage-data/lakes' element={
                   <Content>
                     <Lakes />
@@ -70,10 +79,6 @@ function App() {
               <Route path='/data' element={<MainDataPage />} />
               <Route path='/data/repositories' element={<Repositories />} />
               <Route path='/data/repositories/:id' element={<LakeDataDashboardPage />} />
-
-              <Route path='/concept' element={<UnderConstruction />} />
-              <Route path='/activities' element={<UnderConstruction />} />
-              <Route path='/news' element={<UnderConstruction />} />
               <Route path='/profile' element={<UnderConstruction />} />
             </Route>
 
