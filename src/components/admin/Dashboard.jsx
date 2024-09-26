@@ -3,63 +3,51 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, LineElement, 
 import { Line, Bar, Pie, Doughnut } from 'react-chartjs-2';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { Users, Activity, Droplet, CloudRain, Fish, AlertTriangle, Bell, ArrowUp, ArrowDown } from 'lucide-react';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend);
 
-// Componentes auxiliares
-const TabButton = ({ active, onClick, children }) => (
+const TabButton = ({ active, onClick, icon: Icon, children }) => (
     <button
-        className={`px-4 py-2 font-semibold rounded-t-lg transition-colors duration-200 ${active ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-            }`}
         onClick={onClick}
+        className={`flex items-center px-4 py-2 ${active ? 'bg-red-600 text-white' : 'text-red-700 hover:bg-red-200'} transition rounded-lg`}
     >
+        <Icon className="h-5 w-5 mr-2" />
         {children}
     </button>
 );
 
-const Card = ({ title, description, children }) => (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="px-6 py-4 bg-gradient-to-r from-red-500 to-red-600">
-            <h3 className="font-bold text-xl mb-2 text-white">{title}</h3>
-            {description && <p className="text-blue-100 text-sm">{description}</p>}
+const StatCard = ({ title, value, icon: Icon, description, trend }) => (
+    <div className="bg-white shadow-lg rounded-lg p-6 flex flex-col justify-between hover:shadow-xl transition-shadow duration-300">
+        <div className="flex justify-between items-center">
+            <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
+            <Icon className="h-7 w-7 text-red-600" />
         </div>
-        <div className="px-6 py-4">
-            {children}
+        <div className="mt-2">
+            <p className="text-3xl font-bold text-gray-900">{value}</p>
+            <div className="flex items-center mt-1">
+                {trend === 'up' ? (
+                    <ArrowUp className="h-4 w-4 text-green-500 mr-1" />
+                ) : (
+                    <ArrowDown className="h-4 w-4 text-red-500 mr-1" />
+                )}
+                <p className={`text-sm ${trend === 'up' ? 'text-green-500' : 'text-red-500'}`}>{description}</p>
+            </div>
         </div>
     </div>
 );
 
-const Alert = ({ type, title, description }) => {
-    const colors = {
-        error: 'bg-red-100 border-red-500 text-red-700',
-        warning: 'bg-yellow-100 border-yellow-500 text-yellow-700',
-        info: 'bg-blue-100 border-blue-500 text-blue-700',
-    };
-
-    return (
-        <div className={`border-l-4 p-4 mb-4 ${colors[type]}`} role="alert">
-            <p className="font-bold">{title}</p>
-            <p>{description}</p>
-        </div>
-    );
-};
-
-const StatCard = ({ title, value, icon }) => (
-    <div className="bg-white rounded-lg shadow-md p-6 flex items-center">
-        <div className="rounded-full bg-blue-100 p-3 mr-4">
-            {icon}
-        </div>
-        <div>
-            <h4 className="text-sm font-medium text-gray-500 uppercase">{title}</h4>
-            <p className="text-2xl font-semibold text-gray-700">{value}</p>
-        </div>
+const CustomAlert = ({ children }) => (
+    <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg flex items-center">
+        <AlertTriangle className="h-5 w-5 mr-2" />
+        {children}
     </div>
 );
 
 const Dashboard = () => {
     const [activeTab, setActiveTab] = useState("general");
+    const [showAlerts, setShowAlerts] = useState(true);
 
-    // Datos simulados para el dashboard
     const userStats = {
         totalUsers: 12500,
         activeUsers: 8750,
@@ -70,7 +58,7 @@ const Dashboard = () => {
         labels: ['Ecuador', 'Colombia', 'Perú', 'Bolivia', 'Otros'],
         datasets: [{
             data: [6000, 2500, 2000, 1500, 500],
-            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+            backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6'],
         }],
     };
 
@@ -79,8 +67,10 @@ const Dashboard = () => {
         datasets: [{
             label: 'Usuarios Activos',
             data: [7500, 7800, 8200, 8100, 8400, 8750],
-            borderColor: 'rgb(75, 192, 192)',
-            tension: 0.1
+            borderColor: '#10B981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            tension: 0.4,
+            fill: true,
         }],
     };
 
@@ -90,23 +80,17 @@ const Dashboard = () => {
             {
                 label: 'pH del Agua',
                 data: [7.2, 6.8, 7.5, 7.0],
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
+                backgroundColor: 'rgba(16, 185, 129, 0.6)',
             },
             {
                 label: 'Oxígeno Disuelto (mg/L)',
                 data: [8.2, 7.8, 9.0, 8.6],
-                backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                borderColor: 'rgba(153, 102, 255, 1)',
-                borderWidth: 1,
+                backgroundColor: 'rgba(59, 130, 246, 0.6)',
             },
             {
                 label: 'Temperatura (°C)',
                 data: [18, 16, 15, 19],
-                backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                borderColor: 'rgba(255, 159, 64, 1)',
-                borderWidth: 1,
+                backgroundColor: 'rgba(245, 158, 11, 0.6)',
             },
         ],
     };
@@ -117,9 +101,9 @@ const Dashboard = () => {
             {
                 label: 'Precipitación (mm)',
                 data: [120, 150, 180, 100, 90, 110],
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
+                borderColor: '#0EA5E9',
+                backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                tension: 0.4,
                 fill: true,
             },
         ],
@@ -131,8 +115,7 @@ const Dashboard = () => {
             {
                 label: 'Especies',
                 data: [45, 80, 30, 120],
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
-                hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'],
+                backgroundColor: ['#10B981', '#3B82F6', '#F59E0B', '#EF4444'],
             },
         ],
     };
@@ -143,122 +126,115 @@ const Dashboard = () => {
             {
                 label: 'Nivel de Contaminación',
                 data: [3, 7, 2, 5],
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1,
+                backgroundColor: 'rgba(239, 68, 68, 0.6)',
             },
         ],
     };
 
     return (
-        <div className="container mx-auto px-4 py-8 bg-gray-100 min-h-screen">
-            <h1 className="text-4xl font-bold text-center mb-8 text-gray-800">Dashboard Administrativo de Lagos Andinos</h1>
-
-            <div className="mb-6 bg-white p-4 rounded-lg shadow-md">
-                <TabButton active={activeTab === "general"} onClick={() => setActiveTab("general")}>General</TabButton>
-                <TabButton active={activeTab === "usuarios"} onClick={() => setActiveTab("usuarios")}>Usuarios</TabButton>
-                <TabButton active={activeTab === "calidad-agua"} onClick={() => setActiveTab("calidad-agua")}>Calidad del Agua</TabButton>
-                <TabButton active={activeTab === "clima"} onClick={() => setActiveTab("clima")}>Clima</TabButton>
-                <TabButton active={activeTab === "biodiversidad"} onClick={() => setActiveTab("biodiversidad")}>Biodiversidad</TabButton>
-            </div>
-
-            {activeTab === "general" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-                    <StatCard
-                        title="Total Usuarios"
-                        value={userStats.totalUsers.toLocaleString()}
-                        icon={<svg className="w-6 h-6 text-blue-500" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>}
-                    />
-                    <StatCard
-                        title="Usuarios Activos"
-                        value={userStats.activeUsers.toLocaleString()}
-                        icon={<svg className="w-6 h-6 text-green-500" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor"><path d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>}
-                    />
-                    <StatCard
-                        title="Nuevos Usuarios (Mes)"
-                        value={userStats.newUsersThisMonth.toLocaleString()}
-                        icon={<svg className="w-6 h-6 text-yellow-500" fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" viewBox="0 0 24 24" stroke="currentColor"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>}
-                    />
+        <div className="bg-[#F3F4F8] min-h-screen py-16">
+            <div className="w-11/12 mx-auto space-y-8">
+                <div className="flex justify-between items-center">
+                    <h1 className="text-4xl font-bold text-red-800">Dashboard de Lagos Andinos</h1>
+                    <button
+                        onClick={() => setShowAlerts(!showAlerts)}
+                        className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors duration-300"
+                    >
+                        <Bell className="h-5 w-5 text-red-600" />
+                    </button>
                 </div>
-            )}
 
-            {activeTab === "general" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card title="Mapa de Localización de los Lagos">
-                        <MapContainer center={[-0.3685, -78.1385]} zoom={8} style={{ height: '400px' }}>
-                            <TileLayer
-                                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                                attribution="&copy; OpenStreetMap contributors"
-                            />
-                            <Marker position={[-0.223, -78.276]}><Popup>Lago San Pablo</Popup></Marker>
-                            <Marker position={[-0.307, -78.441]}><Popup>Lago Cuicocha</Popup></Marker>
-                            <Marker position={[-0.138, -78.238]}><Popup>Lago Mojanda</Popup></Marker>
-                            <Marker position={[-0.330, -78.155]}><Popup>Lago Yahuarcocha</Popup></Marker>
-                        </MapContainer>
-                    </Card>
+                {showAlerts && (
+                    <CustomAlert>
+                        Se ha detectado un aumento en los niveles de contaminación en el Lago Cuicocha.
+                    </CustomAlert>
+                )}
 
-                    <Card title="Alertas Ambientales" description="Problemas actuales que requieren atención">
-                        <Alert
-                            type="error"
-                            title="Contaminación en Lago Cuicocha"
-                            description="Presencia de metales pesados detectada. Se requiere intervención inmediata."
-                        />
-                        <Alert
-                            type="warning"
-                            title="Erosión en Lago Yahuarcocha"
-                            description="Degradación significativa de riberas observada. Plan de restauración en desarrollo."
-                        />
-                        <Alert
-                            type="warning"
-                            title="Especies invasoras en Lago San Pablo"
-                            description="Presencia de tilapia afectando el ecosistema local. Monitoreo en curso."
-                        />
-                    </Card>
+                <div className="flex space-x-4 mb-6 overflow-x-auto pb-2">
+                    <TabButton active={activeTab === "general"} onClick={() => setActiveTab("general")} icon={Activity}>General</TabButton>
+                    <TabButton active={activeTab === "usuarios"} onClick={() => setActiveTab("usuarios")} icon={Users}>Usuarios</TabButton>
+                    <TabButton active={activeTab === "calidad-agua"} onClick={() => setActiveTab("calidad-agua")} icon={Droplet}>Calidad del Agua</TabButton>
+                    <TabButton active={activeTab === "clima"} onClick={() => setActiveTab("clima")} icon={CloudRain}>Clima</TabButton>
+                    <TabButton active={activeTab === "biodiversidad"} onClick={() => setActiveTab("biodiversidad")} icon={Fish}>Biodiversidad</TabButton>
                 </div>
-            )}
 
-            {activeTab === "usuarios" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card title="Distribución de Usuarios por País">
-                        <div style={{ height: '300px' }}>
-                            <Doughnut data={userCountryData} options={{ maintainAspectRatio: false }} />
+                {activeTab === "general" && (
+                    <>
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            <StatCard title="Total Usuarios" value={userStats.totalUsers.toLocaleString()} icon={Users} description="4% más que el mes pasado" trend="up" />
+                            <StatCard title="Usuarios Activos" value={userStats.activeUsers.toLocaleString()} icon={Activity} description="12% más que el mes pasado" trend="up" />
+                            <StatCard title="Nuevos Usuarios" value={userStats.newUsersThisMonth.toLocaleString()} icon={Users} description="2% menos que el mes pasado" trend="down" />
                         </div>
-                    </Card>
-                    <Card title="Actividad de Usuarios">
-                        <div style={{ height: '300px' }}>
-                            <Line data={userActivityData} options={{ maintainAspectRatio: false }} />
+
+                        <div className="bg-white shadow-lg rounded-lg p-6 mt-6">
+                            <h3 className="text-lg font-semibold mb-4 text-gray-800">Mapa de Lagos Andinos</h3>
+                            <div style={{ height: '400px', width: '100%' }}>
+                                <MapContainer center={[-0.225219, -78.5248]} zoom={6} style={{ height: '100%', width: '100%' }}>
+                                    <TileLayer
+                                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                    />
+                                    <Marker position={[-0.225219, -78.5248]}>
+                                        <Popup>Quito, Ecuador</Popup>
+                                    </Marker>
+                                </MapContainer>
+                            </div>
                         </div>
-                    </Card>
-                </div>
-            )}
+                    </>
+                )}
 
-            {activeTab === "calidad-agua" && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <Card title="Indicadores de Calidad del Agua">
-                        <Bar data={waterQualityData} />
-                    </Card>
-
-                    <Card title="Nivel de Contaminación">
-                        <Bar data={contaminationData} />
-                    </Card>
-                </div>
-            )}
-
-            {activeTab === "clima" && (
-                <Card title="Datos de Precipitación">
-                    <Line data={precipitationData} />
-                </Card>
-            )}
-
-            {activeTab === "biodiversidad" && (
-                <Card title="Especies Registradas">
-                    <div className="flex justify-center">
-                        <div style={{ width: '50%' }}>
-                            <Pie data={speciesData} />
+                {activeTab === "usuarios" && (
+                    <div className="grid gap-6 md:grid-cols-2">
+                        <div className="bg-white shadow-lg rounded-lg p-6">
+                            <h3 className="text-lg font-semibold mb-4 text-gray-800">Distribución de Usuarios por País</h3>
+                            <div style={{ height: '340px' }}>
+                                <Doughnut data={userCountryData} options={{ responsive: true, maintainAspectRatio: false }} />
+                            </div>
+                        </div>
+                        <div className="bg-white shadow-lg rounded-lg p-6">
+                            <h3 className="text-lg font-semibold mb-4 text-gray-800">Actividad de Usuarios</h3>
+                            <div style={{ height: '340px' }}>
+                                <Line data={userActivityData} options={{ responsive: true, maintainAspectRatio: false }} />
+                            </div>
                         </div>
                     </div>
-                </Card>
-            )}
+                )}
+
+                {activeTab === "calidad-agua" && (
+                    <div className="grid gap-6 md:grid-cols-2">
+                        <div className="bg-white shadow-lg rounded-lg p-6">
+                            <h3 className="text-lg font-semibold mb-4 text-gray-800">Parámetros de Calidad del Agua</h3>
+                            <div style={{ height: '340px' }}>
+                                <Bar data={waterQualityData} options={{ responsive: true, maintainAspectRatio: false }} />
+                            </div>
+                        </div>
+                        <div className="bg-white shadow-lg rounded-lg p-6">
+                            <h3 className="text-lg font-semibold mb-4 text-gray-800">Nivel de Contaminación</h3>
+                            <div style={{ height: '340px' }}>
+                                <Bar data={contaminationData} options={{ responsive: true, maintainAspectRatio: false }} />
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === "clima" && (
+                    <div className="bg-white shadow-lg rounded-lg p-6">
+                        <h3 className="text-lg font-semibold mb-4 text-gray-800">Precipitación Mensual</h3>
+                        <div style={{ height: '340px' }}>
+                            <Line data={precipitationData} options={{ responsive: true, maintainAspectRatio: false }} />
+                        </div>
+                    </div>
+                )}
+
+                {activeTab === "biodiversidad" && (
+                    <div className="bg-white shadow-lg rounded-lg p-6">
+                        <h3 className="text-lg font-semibold mb-4 text-gray-800">Especies en los Lagos</h3>
+                        <div style={{ height: '340px' }}>
+                            <Pie data={speciesData} options={{ responsive: true, maintainAspectRatio: false }} />
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

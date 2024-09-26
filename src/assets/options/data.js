@@ -46,12 +46,15 @@ export const useTranslatedLinks = () => {
             ]
         },
         {
-            id: 3,
-            title: t("our-actions"),
-        },
-        {
             id: 4,
             title: t("publications"),
+            submenu: [
+                {
+                    id: 4.1,
+                    title: t('data'),
+                    url: "/data"
+                }
+            ]
         },
         {
             id: 5,
@@ -60,6 +63,7 @@ export const useTranslatedLinks = () => {
         {
             id: 6,
             title: t("contact-us"),
+            url: "/contact-us",
         },
         {
             id: 7,

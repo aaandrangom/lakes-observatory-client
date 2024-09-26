@@ -55,8 +55,8 @@ const MainData = () => {
         <div className="flex h-screen bg-gradient-to-b from-blue-50 to-white">
             <div className="w-1/2 p-4 overflow-y-auto flex flex-col" style={{ maxHeight: 'calc(100vh - 4rem)' }}>
                 <div className="bg-white p-4 rounded-lg shadow" style={{ height: 'calc(100vh - 6rem)' }}>
-                    <h1 className="text-3xl font-bold text-blue-600 mb-2">Parámetros Físicoquímicos de Calidad del Agua</h1>
-                    <h2 className="text-lg text-gray-600 mb-4">Información sobre las variables clave para evaluar la calidad del agua</h2>
+                    <h1 className="text-2xl font-bold text-blue-600 mb-2">Parámetros Físicoquímicos de Calidad del Agua</h1>
+                    <h2 className="text-1lg text-gray-600 mb-4">Información sobre las variables clave para evaluar la calidad del agua</h2>
                     <p className="mb-4 text-gray-700">
                         La red de monitoreo de la UTN proporciona información detallada sobre los parámetros físicoquímicos que son cruciales para evaluar la calidad del agua en los ecosistemas alto-andinos. Estos parámetros ayudan a caracterizar las condiciones del agua y su impacto en el entorno.
                     </p>

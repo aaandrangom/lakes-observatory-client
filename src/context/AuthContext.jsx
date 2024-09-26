@@ -14,6 +14,7 @@ const isPublicRoute = (path) => {
         '/sign-up',
         '/activities',
         '/news',
+        '/auth-required',
         /^\/change-password\/.*/,
         /^\/account-verified\/.*/
     ];
@@ -41,7 +42,8 @@ const routeExists = (path) => {
         '/admin/upload-data',
         '/data/repositories',
         '/profile',
-        '/regular-user', // Asegúrate de incluir esta ruta
+        '/regular-user',
+        '/auth-required',
     ];
 
     return validRoutes.includes(path) ||
@@ -106,18 +108,21 @@ export const AuthProvider = ({ children }) => {
                 setRoles(userRoles);
                 setUserId(response.data.body.user.id);
 
-                if (userRoles.includes('admin')) {
-                    navigate('/admin/dashboard');
+                const destination = location.state?.from;
+                if (destination) {
+                    navigate(destination, { replace: true });
                 } else {
-                    navigate('/regular-user');
+                    // Navegar basado en el rol del usuario cuando no hay un destino específico
+                    navigate(userRoles.includes('admin') ? '/admin/dashboard' : '/regular-user', { replace: true });
                 }
             }
             return response;
         } catch (error) {
-            console.error('Error in signInAction:', error);
+            console.error('Error en signInAction:', error);
             throw error;
         }
     };
+
 
     const logoutAction = async () => {
         try {
@@ -144,8 +149,8 @@ export const AuthProvider = ({ children }) => {
             }
 
             if (!isPublicRoute(currentPath) && !loading && !isAuthenticated) {
-                console.log('Redirecting to sign-in due to unauthorized access:', currentPath);
-                navigate('/sign-in');
+                console.log('Redirecting to auth-required due to unauthorized access:', currentPath);
+                navigate('/auth-required', { state: { from: currentPath } });
             }
         };
 

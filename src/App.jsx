@@ -26,6 +26,8 @@ const LakeDataDashboardPage = lazy(() => import('./pages/LakeDataDashboard'));
 const UnderConstruction = lazy(() => import('./pages/UnderConstruction'));
 const ChatFloat = lazy(() => import('./components/common/ChatFloat'));
 const Dashboard = lazy(() => import('./components/admin/Dashboard'));
+const ContactUser = lazy(() => import('./pages/ContacUs'));
+const AuthRequired = lazy(() => import('./pages/AuthRequired'));
 
 function App() {
   return (
@@ -40,6 +42,9 @@ function App() {
             <Route path='/link-expired' element={<LinkExpired />} />
             <Route path='/sign-up' element={<Register />} />
             <Route path='/account-verified/:token' element={<AccountVerified />} />
+
+            <Route path='/contact-us' element={<ContactUser />} />
+            <Route path='/auth-required' element={<AuthRequired />} />
 
             <Route path='/concept' element={<UnderConstruction />} />
             <Route path='/activities' element={<UnderConstruction />} />
