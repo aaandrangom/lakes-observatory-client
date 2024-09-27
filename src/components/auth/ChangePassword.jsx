@@ -48,7 +48,6 @@ const ChangePassword = () => {
         toast.promise(
             (async () => {
                 const response = await Auth.recoverPassword(token, newPassword);
-                console.log(response);
                 if (response.status === 200) {
                     return response.data?.msg;
                 }

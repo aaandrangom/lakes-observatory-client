@@ -13,7 +13,6 @@ const AccountVerified = () => {
         const confirmUser = async () => {
             try {
                 const response = await Auth.accountVerified(token);
-                console.log('response2', response);
                 if (response.status !== 200) {
                     navigate("/link-expired");
                 } else {

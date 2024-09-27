@@ -52,7 +52,6 @@ const Register = () => {
         toast.promise(
             (async () => {
                 const response = await Auth.signUp(user);
-                console.log('response', response);
                 if (response.status === 200) {
 
                     setFullName("");

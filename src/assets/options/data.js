@@ -27,7 +27,7 @@ export const useTranslatedLinks = () => {
         {
             id: 2,
             title: t("meet-us"),
-            submenu: [
+            /*submenu: [
                 {
                     id: 2.1,
                     title: t('opcion1'),
@@ -43,7 +43,7 @@ export const useTranslatedLinks = () => {
                     title: t('opcion1'),
                     url: "/opcion1"
                 }
-            ]
+            ]*/
         },
         {
             id: 4,

@@ -16,7 +16,6 @@ const AccountVerificationStatus = () => {
         const confirmUser = async () => {
             try {
                 const response = await Auth.accountVerified(token);
-                console.log(response);
                 if (response.status === 400) {
                     setIsBadRequest(true);
                     setIsLinkExpired(true);

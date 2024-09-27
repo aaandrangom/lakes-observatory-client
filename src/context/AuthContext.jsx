@@ -149,7 +149,6 @@ export const AuthProvider = ({ children }) => {
             }
 
             if (!isPublicRoute(currentPath) && !loading && !isAuthenticated) {
-                console.log('Redirecting to auth-required due to unauthorized access:', currentPath);
                 navigate('/auth-required', { state: { from: currentPath } });
             }
         };

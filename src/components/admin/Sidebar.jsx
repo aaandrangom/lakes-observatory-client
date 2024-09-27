@@ -24,7 +24,6 @@ const Sidebar = () => {
         toast.promise(
             (async () => {
                 const response = await logoutAction();
-                console.log(response);
                 if (response.status === 200) {
                     return response.data?.msg;
                 }

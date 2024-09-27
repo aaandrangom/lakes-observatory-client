@@ -8,7 +8,6 @@ import { toast } from 'sonner';
 import LanguageSelector from './LanguageSelector.jsx';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaUserCircle, FaUserPlus, FaSignOutAlt } from 'react-icons/fa';
-import { HiOutlineMenuAlt1 } from 'react-icons/hi';
 
 const Header = () => {
     const [open, setOpen] = useState(false);
@@ -31,13 +30,13 @@ const Header = () => {
 
     const handleMouseEnter = (id) => {
         if (window.innerWidth >= 768) {
-            setOpenSubmenu(id); // Open submenu on hover
+            setOpenSubmenu(id);
         }
     };
 
     const handleMouseLeave = () => {
         if (window.innerWidth >= 768) {
-            setOpenSubmenu(null); // Close submenu on mouse leave
+            setOpenSubmenu(null);
         }
     };
 
@@ -146,14 +145,15 @@ const Header = () => {
                                     >
                                         {t(`${link.title}`)}
                                     </Link>
-                                    {/* Show chevron icon only if there is a submenu and on mobile */}
+                                    {link.submenu && (
+                                        <FaChevronDown className="text-white ml-1" size={12} />
+                                    )}
                                     {link.submenu && window.innerWidth < 768 && (
                                         openSubmenu === link.id ?
                                             <FaChevronUp className="text-white" /> :
                                             <FaChevronDown className="text-white" />
                                     )}
                                 </div>
-                                {/* Submenu */}
                                 {link.submenu && (
                                     <ul
                                         className={`absolute bg-white text-gray-800 py-2 rounded-lg shadow-lg transition-all duration-300 z-20 w-48 left-0 lg:left-auto lg:top-14 ${openSubmenu === link.id ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
