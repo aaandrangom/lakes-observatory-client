@@ -73,9 +73,9 @@ const ParametersGrid = () => {
                             param.abbreviation.toLowerCase().includes(searchTerm.toLowerCase())
                         ));
                         fetchParameters();
-                        return response.data?.msg;
+                        return response.data?.message;
                     }
-                    throw new Error(response.data?.details);
+                    throw new Error(response.data?.message);
                 })(),
                 {
                     loading: 'Actualizando...',
@@ -99,9 +99,9 @@ const ParametersGrid = () => {
                             ));
                         }
                         fetchParameters();
-                        return response.data?.msg;
+                        return response.data?.message;
                     }
-                    throw new Error(response.data?.details);
+                    throw new Error(response.data?.message);
                 })(),
                 {
                     loading: 'Creando...',
@@ -125,9 +125,9 @@ const ParametersGrid = () => {
                         param.unit.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         param.abbreviation.toLowerCase().includes(searchTerm.toLowerCase())
                     ));
-                    return response.data?.msg;
+                    return response.data?.message;
                 }
-                throw new Error(response.data?.details);
+                throw new Error(response.data?.message);
             })(),
             {
                 loading: 'Eliminando...',

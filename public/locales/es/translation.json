@@ -34,5 +34,6 @@
     "export-data": "Exportar datos",
     "lakes": "Lagos",
     "parameters": "Parametros",
-    "measurements": "Mediciones"
+    "measurements": "Mediciones",
+    "email-sender": "Correo Saliente"
 }

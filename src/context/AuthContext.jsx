@@ -43,7 +43,9 @@ const routeExists = (path) => {
         '/data/repositories',
         '/profile',
         '/regular-user',
+        '/admin/activity-log',
         '/auth-required',
+        '/admin/settings/email-sender'
     ];
 
     return validRoutes.includes(path) ||
@@ -102,6 +104,7 @@ export const AuthProvider = ({ children }) => {
     const signInAction = async (email, password) => {
         try {
             const response = await Auth.SignIn(email, password);
+
             if (response.status === 200) {
                 const userRoles = response.data.body.roles.map(role => role.role_name);
                 setIsAuthenticated(true);
@@ -112,14 +115,13 @@ export const AuthProvider = ({ children }) => {
                 if (destination) {
                     navigate(destination, { replace: true });
                 } else {
-                    // Navegar basado en el rol del usuario cuando no hay un destino específico
                     navigate(userRoles.includes('admin') ? '/admin/dashboard' : '/regular-user', { replace: true });
                 }
             }
             return response;
         } catch (error) {
             console.error('Error en signInAction:', error);
-            throw error;
+            throw new Error('Se produjo un error inesperado. Por favor, inténtalo más tarde.');
         }
     };
 
@@ -127,6 +129,7 @@ export const AuthProvider = ({ children }) => {
     const logoutAction = async () => {
         try {
             const response = await Auth.Logout();
+            console.log(response)
             if (response.status === 200) {
                 setIsAuthenticated(false);
                 setRoles(null);
@@ -136,7 +139,7 @@ export const AuthProvider = ({ children }) => {
             return response;
         } catch (error) {
             console.error('Error during logout:', error);
-            throw error;
+            throw new Error('Se produjo un error inesperado. Por favor, inténtalo más tarde.');
         }
     };
 

@@ -28,7 +28,6 @@ const MeasurementDetailsModal = ({ measurement, onClose, onSave }) => {
 
     const handleSave = () => {
         if (onSave) {
-            // Enviar los valores editados al componente padre con sus `measurement_value_id`
             onSave(editableValues);
         }
         onClose();

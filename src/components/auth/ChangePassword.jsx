@@ -49,10 +49,10 @@ const ChangePassword = () => {
             (async () => {
                 const response = await Auth.recoverPassword(token, newPassword);
                 if (response.status === 200) {
-                    return response.data?.msg;
+                    return response.data?.message;
                 }
 
-                throw new Error(response.data?.details);
+                throw new Error(response.data?.message);
             })(),
             {
                 loading: 'Cambiando contraseña...',

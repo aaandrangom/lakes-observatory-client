@@ -32,5 +32,6 @@
     "export-data": "Export Data",
     "lakes": "Lakes",
     "parameters": "Parameters",
-    "measurements": "Measurements"
+    "measurements": "Measurements",
+    "email-sender": "Outgoing Mail"
 }

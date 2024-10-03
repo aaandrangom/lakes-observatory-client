@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { FaLock, FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
 import bgHome from "/images/bg-home.jpg";
 import { useAuth } from '../../context/AuthContext';
@@ -10,7 +10,6 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
     const { signInAction } = useAuth();
     const { t } = useTranslation();
 
@@ -20,12 +19,11 @@ const Login = () => {
         toast.promise(
             (async () => {
                 const response = await signInAction(email, password);
-
                 if (response.status === 200) {
                     return response.data.body.user[0].full_name;
                 }
 
-                throw new Error(response.data?.details);
+                throw new Error(response.data?.message);
 
             })(),
             {

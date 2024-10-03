@@ -28,6 +28,9 @@ const ChatFloat = lazy(() => import('./components/common/ChatFloat'));
 const Dashboard = lazy(() => import('./components/admin/Dashboard'));
 const ContactUser = lazy(() => import('./pages/ContacUs'));
 const AuthRequired = lazy(() => import('./pages/AuthRequired'));
+const AuditPage = lazy(() => import('./components/admin/Audit'));
+const EmailSender = lazy(() => import('./components/admin/EmailSender'));
+const EmailTest = lazy(() => import('./components/admin/EmailTest'));
 
 function App() {
   return (
@@ -75,6 +78,18 @@ function App() {
                 <Route path='/admin/upload-data' element={
                   <Content>
                     <ImportExcel />
+                  </Content>
+                } />
+                <Route path='/admin/activity-log' element={
+                  <Content>
+                    <AuditPage />
+                  </Content>
+                } />
+
+                <Route path='/admin/settings/email-sender' element={
+                  <Content>
+                    <EmailSender />
+                    <EmailTest />
                   </Content>
                 } />
               </Route>

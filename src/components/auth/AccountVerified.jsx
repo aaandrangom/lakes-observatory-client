@@ -19,8 +19,8 @@ const AccountVerificationStatus = () => {
                 if (response.status === 400) {
                     setIsBadRequest(true);
                     setIsLinkExpired(true);
-                } else if (response.status !== 200 && response.data.details) {
-                    const user_id = response.data.details.user_id;
+                } else if (response.status !== 200 && response.data.message) {
+                    const user_id = response.data.message.user_id;
                     setUserId(user_id);
                     setIsLinkExpired(true);
                 } else {
@@ -54,10 +54,10 @@ const AccountVerificationStatus = () => {
                 const response = await Auth.sendEmailVerificationAgain(email, full_name, userId);
 
                 if (response.status === 200) {
-                    return response.data.body.msg;
+                    return response.data.body.message;
                 }
 
-                throw new Error(response.data?.details);
+                throw new Error(response.data?.message);
             })(),
             {
                 loading: 'Reenviando correo de verificación...',

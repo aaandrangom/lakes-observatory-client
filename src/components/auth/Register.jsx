@@ -59,10 +59,10 @@ const Register = () => {
                     setNationality("");
                     setPassword("");
                     setConfirmPassword("");
-                    return response.data?.msg;
+                    return response.data?.message;
                 }
 
-                throw new Error(response.data?.details);
+                throw new Error(response.data?.message);
             })(),
             {
                 loading: 'Registrando...',

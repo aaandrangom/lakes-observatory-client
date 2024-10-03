@@ -6,7 +6,7 @@ import {
 import {
     AiOutlineDashboard, AiOutlineCloudUpload, AiOutlineDatabase,
     AiOutlineBarChart, AiOutlineSetting, AiOutlineHistory,
-    AiOutlineDownload
+    AiOutlineDownload, AiOutlineMail
 } from "react-icons/ai";
 
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -142,7 +142,16 @@ export const useTranslatedLinks = () => {
             title: t('settings'),
             url: "/admin/settings",
             icon: AiOutlineSetting,
-            ref: "settings"
+            ref: "settings",
+            submenu: [
+                {
+                    id: 1.2,
+                    title: t("email-sender"),
+                    url: "/admin/settings/email-sender",
+                    icon: AiOutlineMail,
+                }
+
+            ]
         },
         {
             id: 7,

@@ -62,7 +62,7 @@ const MeasurementsGrid = () => {
                     if (response.status === 200) {
                         return response;
                     } else {
-                        throw new Error(response.data?.details || 'Error al actualizar el valor');
+                        throw new Error(response.data?.message || 'Error al actualizar el valor');
                     }
                 });
 

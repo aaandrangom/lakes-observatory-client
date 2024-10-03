@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Table = ({
     getTableProps,
@@ -14,23 +14,47 @@ const Table = ({
     pageOptions,
     setPageSize,
     pageSize,
+    renderRowSubComponent
 }) => {
+    const [isCompact, setIsCompact] = useState(false);
+    const [containerWidth, setContainerWidth] = useState(0);
+
+    useEffect(() => {
+        const handleResize = () => {
+            const container = document.getElementById('table-container');
+            if (container) {
+                setContainerWidth(container.offsetWidth);
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    useEffect(() => {
+        const totalColumnsWidth = headerGroups[0]?.headers.reduce((total, header) => {
+            return total + (header.width || 150); // Asumimos un ancho por defecto de 150px si no se especifica
+        }, 0);
+
+        setIsCompact(totalColumnsWidth > containerWidth);
+    }, [headerGroups, containerWidth]);
+
     return (
-        <div className="overflow-x-auto">
-            <table {...getTableProps()} className="min-w-full bg-white rounded-lg shadow-md">
-                <thead {...getTableProps()}>
+        <div id="table-container" className="overflow-x-auto">
+            <table {...getTableProps()} className={`w-full bg-white rounded-lg shadow-md ${isCompact ? 'table-fixed' : 'table-auto'}`}>
+                <thead>
                     {headerGroups.map(headerGroup => {
-                        const headerGroupProps = headerGroup.getHeaderGroupProps();
-                        const headerGroupKey = headerGroupProps.key;
-                        delete headerGroupProps.key;
+                        const { key, ...headerGroupProps } = headerGroup.getHeaderGroupProps();
                         return (
-                            <tr key={headerGroupKey} {...headerGroupProps}>
+                            <tr key={key} {...headerGroupProps}>
                                 {headerGroup.headers.map(column => {
-                                    const columnProps = column.getHeaderProps();
-                                    const columnKey = columnProps.key;
-                                    delete columnProps.key;
+                                    const { key, ...columnProps } = column.getHeaderProps();
                                     return (
-                                        <th key={columnKey} {...columnProps} className="text-center px-4 py-2 text-gray-700 font-semibold">
+                                        <th key={key} {...columnProps} className={`text-center px-4 py-2 text-gray-700 font-semibold ${isCompact ? 'truncate' : ''}`}>
                                             {column.render('Header')}
                                         </th>
                                     );
@@ -42,26 +66,32 @@ const Table = ({
                 <tbody {...getTableBodyProps()}>
                     {page.map((row) => {
                         prepareRow(row);
-                        const rowProps = row.getRowProps();
-                        const rowKey = rowProps.key;
-                        delete rowProps.key;
+                        const { key, ...rowProps } = row.getRowProps();
                         return (
-                            <tr key={rowKey} {...rowProps} className="border-t">
-                                {row.cells.map((cell) => {
-                                    const cellProps = cell.getCellProps();
-                                    const cellKey = cellProps.key;
-                                    delete cellProps.key;
-                                    return (
-                                        <td key={cellKey} {...cellProps} className=" text-center px-4 py-2 text-gray-600">
-                                            {cell.render('Cell')}
+
+
+                            <React.Fragment key={row.id}>
+                                <tr key={key} {...rowProps} className="border-t">
+                                    {row.cells.map((cell) => {
+                                        const { key, ...cellProps } = cell.getCellProps();
+                                        return (
+                                            <td key={key} {...cellProps} className={`text-center px-4 py-2 text-gray-600 ${isCompact ? 'truncate' : ''}`}>
+                                                {cell.render('Cell')}
+                                            </td>
+                                        );
+                                    })}
+                                </tr>
+                                {row.isExpanded && (
+                                    <tr>
+                                        <td colSpan={row.cells.length}>
+                                            {renderRowSubComponent({ row })}
                                         </td>
-                                    );
-                                })}
-                            </tr>
+                                    </tr>
+                                )}
+                            </React.Fragment>
                         );
                     })}
                 </tbody>
-
             </table>
             <div className="flex justify-between items-center mt-4">
                 <div className="flex items-center space-x-2">

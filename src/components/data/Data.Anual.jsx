@@ -3,8 +3,10 @@ import { useTable } from 'react-table';
 import { Lakes } from "../../services/lakes";
 import { Parameters } from "../../services/parameter";
 import { Measurements } from "../../services/measurements";
+import { Imports } from '../../services/import';
 import BarChart from '../graphics/BarChart';
 import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 const LakeDataDashboard = () => {
     const { id } = useParams();
@@ -88,7 +90,6 @@ const LakeDataDashboard = () => {
         return parameter ? parameter.name : 'Nombre no encontrado';
     };
 
-
     const parameterName = getParameterName(selectedParameter);
 
     const chartLayout = {
@@ -102,9 +103,17 @@ const LakeDataDashboard = () => {
         yaxis: { title: 'Valor' },
     };
 
-
     const chartConfig = {
         responsive: true,
+    };
+
+    const handleDownloadExcel = async () => {
+        try {
+            await Imports.generateExcel(selectedLake, selectedParameter, selectedYear);
+        } catch (error) {
+            toast.error('Error generating excel file');
+            console.error('Error al generar el Excel:', error);
+        }
     };
 
     return (
@@ -153,6 +162,13 @@ const LakeDataDashboard = () => {
                     </select>
                 </div>
 
+                <button
+                    onClick={handleDownloadExcel}
+                    className="mb-8 py-3 px-6 bg-blue-600 text-white rounded-full hover:bg-blue-700"
+                >
+                    Descargar Excel
+                </button>
+
                 {loading ? (
                     <div className="flex justify-center items-center h-64">
                         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-500"></div>
@@ -160,6 +176,7 @@ const LakeDataDashboard = () => {
                 ) : measurementData.length === 0 ? (
                     <p className="text-center text-gray-600 text-lg">No hay datos disponibles para la selección actual.</p>
                 ) : (
+
                     <div className="flex flex-row gap-8">
                         <div className="flex-1 bg-white p-6 rounded-xl shadow-lg max-w-lg">
                             <h3 className="text-xl font-bold text-blue-600 mb-4">

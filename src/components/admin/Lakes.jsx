@@ -65,7 +65,7 @@ const LakesGrid = () => {
             toast.promise(
                 (async () => {
                     const response = await Lakes.update(lakeId, updatedData);
-
+                    console.log(response);
                     if (response.status === 200) {
                         const updatedLakes = lakes.map(lake =>
                             lake.id === lakeId ? {
@@ -81,10 +81,10 @@ const LakesGrid = () => {
                             lake.city.toLowerCase().includes(searchTerm.toLowerCase())
                         ));
                         fetchLakes();
-                        return response.data?.msg;
+                        return response.data?.message;
                     }
 
-                    throw new Error(response.data?.details);
+                    throw new Error(response.data?.message);
                 })(),
                 {
                     loading: 'Actualizando...',
@@ -111,10 +111,10 @@ const LakesGrid = () => {
                             ));
                         }
                         fetchLakes();
-                        return response.data?.msg;
+                        return response.data?.message;
                     }
 
-                    throw new Error(response.data?.details);
+                    throw new Error(response.data?.message);
                 })(),
                 {
                     loading: 'Creando...',
@@ -140,10 +140,10 @@ const LakesGrid = () => {
                         lake.province.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         lake.city.toLowerCase().includes(searchTerm.toLowerCase())
                     ));
-                    return response.data?.msg;
+                    return response.data?.message;
                 }
 
-                throw new Error(response.data?.details);
+                throw new Error(response.data?.message);
             })(),
             {
                 loading: 'Eliminando...',
