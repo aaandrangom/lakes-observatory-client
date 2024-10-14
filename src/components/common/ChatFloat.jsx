@@ -26,7 +26,8 @@ const ChatFloat = () => {
 
             try {
                 const response = await Chat.chat(userMessage);
-                const botMessage = response.data.response || 'No se pudo obtener una respuesta.';
+                console.log('response', response)
+                const botMessage = response.data.body.response || 'No se pudo obtener una respuesta.';
                 setMessages(prev => [...prev, { role: 'model', text: botMessage }]);
             } catch (error) {
                 console.error("Error al obtener respuesta:", error);

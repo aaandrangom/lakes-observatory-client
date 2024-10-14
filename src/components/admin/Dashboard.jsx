@@ -135,7 +135,7 @@ const Dashboard = () => {
         <div className="bg-[#F3F4F8] min-h-screen py-16">
             <div className="w-11/12 mx-auto space-y-8">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-4xl font-bold text-red-800">Dashboard de Lagos Andinos</h1>
+                    <h1 className="text-4xl font-bold text-black">Dashboard de Lagos Andinos</h1>
                     <button
                         onClick={() => setShowAlerts(!showAlerts)}
                         className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors duration-300"
