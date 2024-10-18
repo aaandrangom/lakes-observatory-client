@@ -6,7 +6,7 @@ import {
 import {
     AiOutlineDashboard, AiOutlineCloudUpload, AiOutlineDatabase,
     AiOutlineBarChart, AiOutlineSetting, AiOutlineHistory,
-    AiOutlineDownload, AiOutlineMail
+    AiOutlineDownload, AiOutlineMail, AiFillHome
 } from "react-icons/ai";
 
 import { IoNotificationsOutline } from "react-icons/io5";
@@ -68,7 +68,7 @@ export const useTranslatedLinks = () => {
         {
             id: 7,
             title: t("administration"),
-            url: "/administration",
+            url: "/admin/dashboard",
         },
     ];
 
@@ -174,6 +174,13 @@ export const useTranslatedLinks = () => {
             url: "/admin/export-data",
             icon: AiOutlineDownload,
             ref: "export-data"
+        },
+        {
+            id: 10,
+            title: t('home'),
+            url: "/",
+            icon: AiFillHome,
+            ref: "home"
         }
 
     ]

@@ -1,58 +1,9 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from "react-router-dom";
 import { Auth } from '../services/auth';
+import { isPublicRoute, routeExists } from '../config/routes';
 
 const AuthContext = createContext();
-
-const isPublicRoute = (path) => {
-    const publicPaths = [
-        '/',
-        '/sign-in',
-        '/forgot-password',
-        '/link-expired',
-        '/concept',
-        '/sign-up',
-        '/activities',
-        '/news',
-        '/auth-required',
-        /^\/change-password\/.*/,
-        /^\/account-verified\/.*/
-    ];
-
-    return publicPaths.some(publicPath => {
-        return typeof publicPath === 'string' ? publicPath === path : publicPath.test(path);
-    });
-};
-
-const routeExists = (path) => {
-    const validRoutes = [
-        '/',
-        '/sign-in',
-        '/forgot-password',
-        '/link-expired',
-        '/concept',
-        '/sign-up',
-        '/activities',
-        '/news',
-        '/data',
-        '/admin/dashboard',
-        '/admin/manage-data/lakes',
-        '/admin/manage-data/parameters',
-        '/admin/manage-data/measurements',
-        '/admin/upload-data',
-        '/data/repositories',
-        '/profile',
-        '/regular-user',
-        '/admin/activity-log',
-        '/auth-required',
-        '/admin/settings/email-sender'
-    ];
-
-    return validRoutes.includes(path) ||
-        /^\/change-password\/.*/.test(path) ||
-        /^\/account-verified\/.*/.test(path) ||
-        /^\/data\/repositories\/.*/.test(path);
-};
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -89,17 +40,14 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const currentPath = location.pathname;
 
-        if (!routeExists(currentPath)) {
-            setLoading(false);
-            return;
-        }
-
-        if (!isPublicRoute(currentPath)) {
-            checkAuthStatus();
+        if (!loading) {
+            if (!isPublicRoute(currentPath) && !isAuthenticated) {
+                navigate('/auth-required', { state: { from: currentPath } });
+            }
         } else {
-            setLoading(false);
+            checkAuthStatus();
         }
-    }, [location.pathname]);
+    }, [location.pathname, isAuthenticated, loading]);
 
     const signInAction = async (email, password) => {
         try {
@@ -111,12 +59,8 @@ export const AuthProvider = ({ children }) => {
                 setRoles(userRoles);
                 setUserId(response.data.body.user.id);
 
-                const destination = location.state?.from;
-                if (destination) {
-                    navigate(destination, { replace: true });
-                } else {
-                    navigate(userRoles.includes('admin') ? '/admin/dashboard' : '/regular-user', { replace: true });
-                }
+                const destination = location.state?.from || (userRoles.includes('admin') ? '/admin/dashboard' : '/regular-user');
+                navigate(destination, { replace: true });
             }
             return response;
         } catch (error) {
@@ -125,11 +69,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-
     const logoutAction = async () => {
         try {
             const response = await Auth.Logout();
-            console.log(response)
             if (response.status === 200) {
                 setIsAuthenticated(false);
                 setRoles(null);
@@ -157,6 +99,7 @@ export const AuthProvider = ({ children }) => {
         };
 
         window.addEventListener('unauthorizedAccess', handleUnauthorizedAccess);
+
         return () => {
             window.removeEventListener('unauthorizedAccess', handleUnauthorizedAccess);
         };
